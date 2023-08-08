@@ -12,7 +12,23 @@ import pyvista as pv
 from pyvista import examples
 import math
 
+def fire(a, spread_probability):
+    a[48, 30] = -1
 
+    # Loop through each cell in the a.
+    count = 0
+    for row in range(len(a[:, 0])):
+        for column in range(len(a[0, :])):
+            # If the cell is not on fire, check if it is adjacent to a burning cell.
+            if a[row, column] > 0:
+                for neighbor_row in range(-1, 2):
+                    for neighbor_column in range(-1, 2):
+                        count += 1
+                    if 0 <= row + neighbor_row < len(a[:, 0]) and 0 <= column + neighbor_column < len(a[0, :]):
+                        if a[row + neighbor_row][column + neighbor_column] == 1:
+                            # If it is adjacent to a burning cell, set it on fire with probability `spread_probability`.
+                            if np.random.random() < spread_probability:
+                                a[row, column] = -1
 def distance(point1, point2):
     return np.sqrt(np.sum((point1 - point2) ** 2))
 
@@ -172,25 +188,12 @@ pl.add_mesh(circle2)
 pl.enable_surface_point_picking(callback=callback, show_point=False)
 pl.show()
 # -------------------------------------------------------------------
-# Fire Simulation
-spread_probability = 0.5
-a[48, 30] = -1
-
-# Loop through each cell in the a.
+#Fire simulation
 count = 0
-for row in range(len(a[:, 0])):
-    for column in range(len(a[0, :])):
-      # If the cell is not on fire, check if it is adjacent to a burning cell.
-        if a[row, column] > 0:
-            for neighbor_row in range(-1, 2):
-                for neighbor_column in range(-1, 2):
-                    count+=1
-                if 0 <= row + neighbor_row < len(a[:, 0]) and 0 <= column + neighbor_column < len(a[0, :]):
-                    if a[row + neighbor_row][column + neighbor_column] == 1:
-                # If it is adjacent to a burning cell, set it on fire with probability `spread_probability`.
-                        if np.random.random() < spread_probability:
-                            a[row, column] = -1
-                if(count%5000==0):
-                    np.savetxt(f"fire{count}.csv", a, delimiter=',')
+while not((a!=-1).all()):
+    fire(a, 0.5)
+    if(count%5000==0):
+        np.savetxt(f"fire{count}.csv", a, delimiter=',')
+    count+=1
 
 # ant_colony_optimization(a, 500, 50032, 21, 11, 0.5, 3)
