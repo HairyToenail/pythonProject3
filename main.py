@@ -1,6 +1,5 @@
 import sys
-from asyncio import Queue
-from multiprocessing import RLock
+import queue
 import random
 import torch
 import numpy as np
@@ -11,7 +10,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import pyvista as pv
 
-
+def pythag(array, X1, Y1, X2, Y2):
+    dis = (abs(X2-X1)**2+abs(Y2-Y1)**2)**0.5
+    height = (abs(array[X1, Y1]-array[X2, Y2]))
+    return (dis**2 + height**2)**0.5
 class adjMat(): #not sure if this actually works or if we need it
     def __intit__(self, vertex, matrix):
         self.vertex=vertex
@@ -20,21 +22,6 @@ class adjMat(): #not sure if this actually works or if we need it
         self.matrix[source, destination] = 1
         self.matrix[destination, source] =1
 
-class SynchronousQueue(object):
-
-    def __init__(self):
-        self.q = Queue(1)
-        self.put_lock = RLock()
-
-    def get(self):
-        value = self.q.get(block=True)
-        self.q.task_done()
-        return value
-
-    def put(self, item):
-        with self.put_lock:
-            self.q.put(item, block=True)
-            self.q.join()
 
 def fire(a, spread_probability, startY, startX):
     a[startY, startX] = -1  # starting point
@@ -88,7 +75,7 @@ y_dif = max(y) - min(y)
 z = new[:, 2]
 new[:, 0] = new[:, 0] - min(x)
 new[:, 1] = new[:, 1] - min(y)
-new[:, 2] = new[:, 2] - min(z)
+new[:, 2] = new[:, 2] - min(z) + 0.001
 a = np.zeros((int(max(new[:, 1])*10)+1, int(max(new[:, 0])*10)+1), dtype=float)
 b=np.zeros((int(max(new[:, 1])*10)+1, int(max(new[:, 0])*10)+1), dtype=float)
 
@@ -126,24 +113,36 @@ circle2 = pv.Circle(1)
 circle2 = circle2.translate((8, 15, 3))
 
 # graphs the point cloud and if u right click it gives u the coordinates
-def callback(point):
-    """Create a cube and a label at the click point."""
-    pl.add_mesh(point_cloud)
-    pl.add_point_labels(point, [f"{point[0]:.2f}, {point[1]:.2f}, {point[2]:.2f}"])
-
-pl = pv.Plotter()
-pl.add_mesh(point_cloud)
-pl.add_mesh(circle1)
-pl.add_mesh(circle2)
-pl.enable_surface_point_picking(callback=callback, show_point=False)
-pl.show()
-# -------------------------------------------------------------------
+# def callback(point):
+#     """Create a cube and a label at the click point."""
+#     pl.add_mesh(point_cloud)
+#     pl.add_point_labels(point, [f"{point[0]:.2f}, {point[1]:.2f}, {point[2]:.2f}"])
+#
+# pl = pv.Plotter()
+# pl.add_mesh(point_cloud)
+# pl.add_mesh(circle1)
+# pl.add_mesh(circle2)
+# pl.enable_surface_point_picking(callback=callback, show_point=False)
+# pl.show()
+# # -------------------------------------------------------------------
 #Fire simulation
 fg = a
 cY = random.randint(0, len(a[:, 0]))
 cX = random.randint(0, len(a[0, :]))
-for i in range(100):
-    fire(fg, 0.1, cY, cX)
-    if(i%10==0):
-        np.savetxt(f"fire{i}.csv", fg, delimiter=',')
-print(True)
+while cY == 0 and cX == 0:
+    cY = random.randint(0, len(a[:, 0]))
+    cX = random.randint(0, len(a[0, :]))
+# for i in range(100):
+#     fire(fg, 0.1, cY, cX)
+#     if(i%10==0):
+#         np.savetxt(f"fire{i}.csv", fg, delimiter=',')
+# print(True)
+grad = a
+print(len(a[:, 0]))
+print(np.size(a))
+print(np.size(grad))
+for i in range(len(a[0, :])):
+    for p in range(len(a[:, 0])):
+        if(a[p, i]!=0):
+            grad[p,i]=pythag(grad, cX, cY, p, i)
+np.savetxt("gradient.csv", grad, delimiter=',')
