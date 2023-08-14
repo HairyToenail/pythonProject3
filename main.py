@@ -1,19 +1,79 @@
 import sys
-import queue
 import random
 import torch
 import numpy as np
-import queue
 np.set_printoptions(threshold=sys.maxsize)
 # np.set_printoptions(suppress=True)
 import pandas as pd
 import matplotlib.pyplot as plt
 import pyvista as pv
 
-def pythag(array, X1, Y1, X2, Y2):
-    dis = (abs(X2-X1)**2+abs(Y2-Y1)**2)**0.5
-    height = (abs(array[X1, Y1]-array[X2, Y2]))
-    return (dis**2 + height**2)**0.5
+
+class QItem:
+    def __init__(self, row, col, dist):
+        self.row = row
+        self.col = col
+        self.dist = dist
+
+    def __repr__(self):
+        return f"QItem({self.row}, {self.col}, {self.dist})"
+
+
+def minDistance(grid, startX, startY, endX, endY):
+    source = QItem(startX, startY, 0)
+
+
+    # To maintain location visit status
+    visited = [[False for _ in range(len(grid[0]))]
+               for _ in range(len(grid))]
+
+    # applying BFS on matrix cells starting from source
+    queue = []
+    queue.append(source)
+    visited[source.row][source.col] = True
+    while len(queue) != 0:
+        source = queue.pop(0)
+
+        # Destination found;
+        if (grid[source.row][source.col] == 'd'):
+            return source.dist
+
+        # moving up
+        if isValid(source.row - 1, source.col, grid, visited):
+            queue.append(QItem(source.row - 1, source.col, source.dist + 1))
+            visited[source.row - 1][source.col] = True
+
+        # moving down
+        if isValid(source.row + 1, source.col, grid, visited):
+            queue.append(QItem(source.row + 1, source.col, source.dist + 1))
+            visited[source.row + 1][source.col] = True
+
+        # moving left
+        if isValid(source.row, source.col - 1, grid, visited):
+            queue.append(QItem(source.row, source.col - 1, source.dist + 1))
+            visited[source.row][source.col - 1] = True
+
+        # moving right
+        if isValid(source.row, source.col + 1, grid, visited):
+            queue.append(QItem(source.row, source.col + 1, source.dist + 1))
+            visited[source.row][source.col + 1] = True
+
+    return -1
+
+
+# checking where move is valid or not
+def isValid(x, y, grid, visited):
+    if ((x >= 0 and y >= 0) and
+            (x < len(grid) and y < len(grid[0])) and
+            (grid[x][y] != '0') and (visited[x][y] == False)):
+        return True
+    return False
+
+
+# def pythag(array, X1, Y1, X2, Y2):
+#     dis = (abs(X2-X1)**2+abs(Y2-Y1)**2)**0.5
+#     height = (abs(array[X1, Y1]-array[X2, Y2]))
+#     return (dis**2 + height**2)**0.5
 class adjMat(): #not sure if this actually works or if we need it
     def __intit__(self, vertex, matrix):
         self.vertex=vertex
@@ -63,7 +123,7 @@ point_cloud["elevation"] = data #adds color
 point_cloud = point_cloud.rotate_x(90, transform_all_input_vectors=True, inplace=True)
 
 #point_cloud.plot(render_points_as_spheres=True)
-print(len(points))
+# print(len(points))
 #mesh.plot(texture=texture)  # adds color? - no
 
 # converts the coordinates of cloud ohhhhh okok
@@ -101,8 +161,8 @@ print(len(test))
 # removes 0s from columns and rows ohhhhhokok
 a = a[:, ~np.all(a == 0, axis=0)]
 a = a[~np.all(a == 0, axis=1), :]
-print(b)
-print(new)
+# print(b)
+# print(new)
 
 #np.savetxt("data5.csv", a, delimiter=',')
 #np.savetxt("data6.csv", b, delimiter=',')
@@ -129,20 +189,19 @@ circle2 = circle2.translate((8, 15, 3))
 fg = a
 cY = random.randint(0, len(a[:, 0]))
 cX = random.randint(0, len(a[0, :]))
+eY = random.randint(0, len(a[:, 0]))
+eX = random.randint(0, len(a[0, :]))
 while cY == 0 and cX == 0:
     cY = random.randint(0, len(a[:, 0]))
     cX = random.randint(0, len(a[0, :]))
+    eY = random.randint(0, len(a[:, 0]))
+    eX = random.randint(0, len(a[0, :]))
 # for i in range(100):
 #     fire(fg, 0.1, cY, cX)
 #     if(i%10==0):
 #         np.savetxt(f"fire{i}.csv", fg, delimiter=',')
 # print(True)
 grad = a
-print(len(a[:, 0]))
-print(np.size(a))
-print(np.size(grad))
-for i in range(len(a[0, :])):
-    for p in range(len(a[:, 0])):
-        if(a[p, i]!=0):
-            grad[p,i]=pythag(grad, cX, cY, p, i)
-np.savetxt("gradient.csv", grad, delimiter=',')
+# print(len(a[:, 0]))
+# print(np.size(a))
+# print(np.size(grad))
