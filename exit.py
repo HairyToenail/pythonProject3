@@ -24,18 +24,15 @@ d[55][33]=400
 
 
 class QItem:
-    g= []
-    def __init__(self, row, col, dist, path):
+    def __init__(self, row, col, dist):
         self.row = row
 
         self.col = col
         self.dist = dist
-        g = path
 
     def __repr__(self):
         return f"QItem({self.row}, {self.col}, {self.dist})"
-    def now(self):
-        return self.row, self.col
+
 def minDistance(grid):
     source = QItem(0, 0, 0, list())
 
@@ -69,7 +66,7 @@ def minDistance(grid):
             d[source.row-1][source.col]=500
         # moving down
         if isValid(source.row + 1, source.col, grid, visited):
-            queue.append(QItem(source.row + 1, source.col, source.dist + 1, source.g.append([source.row + 1, source.col])))
+            queue.append(QItem(source.row + 1, source.col, source.dist + 1))
             visited[source.row + 1][source.col] = True
             if (grid[source.row+1][source.col] == 4):
                 return source.dist-1, source.g, len(source.g)
@@ -78,7 +75,7 @@ def minDistance(grid):
 
         # moving left
         if isValid(source.row, source.col - 1, grid, visited):
-            queue.append(QItem(source.row, source.col - 1, source.dist + 1, source.g.append([source.row, source.col-1])))
+            queue.append(QItem(source.row, source.col - 1, source.dist + 1))
             visited[source.row][source.col - 1] = True
             if (grid[source.row][source.col+1] == 4):
                 return source.dist-1, source.g, len(source.g)
@@ -86,7 +83,7 @@ def minDistance(grid):
 
         # moving right
         if isValid(source.row, source.col + 1, grid, visited):
-            queue.append(QItem(source.row, source.col + 1, source.dist + 1, source.g.append([source.row, source.col+1])))
+            queue.append(QItem(source.row, source.col + 1, source.dist + 1))
             visited[source.row][source.col + 1] = True
             if (grid[source.row][source.col-1] == 4):
                 return source.dist-1, source.g, len(source.g)
@@ -112,86 +109,46 @@ if __name__ == '__main__':
     grid = realArray
 
     print(minDistance(grid))
+tt = realArray.copy()
 
+def path(start, end):
+    path = []
+    open = []
+    closed = []
+    open.append[start]
+    while len(open)!=0:
+        open.sort()
+        current = open.pop(0)
+        closed.append(current)
+        parent = start
+        if(current==end):
+            while(current!=start):
+                path.append(current)
+                current = parent
+            return path
+        neighbors = [(current[0]+1, current[1]),
+                     (current[0]-1, current[1]),
+                     (current[0]+1, current[1]+1),
+                     (current[0]-1, current[1]-1),
+                     (current[0], current[1]-1),
+                     (current[0], current[1]+1),
+                     (current[0]+1, current[1]-1),
+                     (current[0]-1, current[1]+1)]
+        for neighbor in neighbors:
+            if(tt[neighbor]!=0 or neighbor in closed):
+                continue
+            cost = tt[current] + cost_estimate(current, neighbor)
+            if(cost<tt[neighbor] or not (neighbor in open)):
+                tt[neighbor] = cost
+                hcost = cost_estimate((neighbor, end))
+                parent = current
+                if(not(neighbor in open)):
+                    open.append(neighbor)
+    return -1
 
-
-
-
-
-
-#
-# def distance(point1, point2):
-#     return np.sqrt(np.sum((point1 - point2) ** 2))
-#
-#
-# def ant_colony_optimization(points, n_ants, n_iterations, alpha, beta, evaporation_rate, Q):
-#     n_points = len(points)
-#     pheromone = np.ones((n_points, n_points))
-#     best_path = None
-#     best_path_length = np.inf
-#
-#     for iteration in range(n_iterations):
-#         paths = []
-#         path_lengths = []
-#
-#         for ant in range(n_ants):
-#             visited = [False] * n_points
-#             current_point = np.random.randint(n_points)
-#             visited[current_point] = True
-#             path = [current_point]
-#             path_length = 0
-#
-#             while False in visited:
-#                 unvisited = np.where(np.logical_not(visited))[0]
-#                 probabilities = np.zeros(len(unvisited))
-#
-#                 for i, unvisited_point in enumerate(unvisited):
-#                     probabilities[i] = pheromone[current_point, unvisited_point] ** alpha / distance(
-#                         points[current_point], points[unvisited_point]) ** beta
-#
-#                 probabilities /= np.sum(probabilities)
-#
-#                 next_point = np.random.choice(unvisited, p=probabilities)
-#                 path.append(next_point)
-#                 path_length += distance(points[current_point], points[next_point])
-#                 visited[next_point] = True
-#                 current_point = next_point
-#
-#             paths.append(path)
-#             path_lengths.append(path_length)
-#
-#             if path_length < best_path_length:
-#                 best_path = path
-#                 best_path_length = path_length
-#
-#         pheromone *= evaporation_rate
-#
-#         for path, path_length in zip(paths, path_lengths):
-#             for i in range(n_points - 1):
-#                 pheromone[path[i], path[i + 1]] += Q / path_length
-#             pheromone[path[-1], path[0]] += Q / path_length
-#
-#     fig = plt.figure(figsize=(8, 6))
-#     ax = fig.add_subplot(111, projection='3d')
-#     ax.scatter(points[:, 0], points[:, 1], points[:, 2], c='r', marker='o')
-#
-#     for i in range(n_points - 1):
-#         ax.plot([points[best_path[i], 0], points[best_path[i + 1], 0]],
-#                 [points[best_path[i], 1], points[best_path[i + 1], 1]],
-#                 [points[best_path[i], 2], points[best_path[i + 1], 2]],
-#                 c='g', linestyle='-', linewidth=2, marker='o')
-#
-#     ax.plot([points[best_path[0], 0], points[best_path[-1], 0]],
-#             [points[best_path[0], 1], points[best_path[-1], 1]],
-#             [points[best_path[0], 2], points[best_path[-1], 2]],
-#             c='g', linestyle='-', linewidth=2, marker='o')
-#
-#     ax.set_xlabel('X Label')
-#     ax.set_ylabel('Y Label')
-#     ax.set_zlabel('Z Label')
-#     plt.show()
-#
-#
-# # Example usage:
-# points = np.random.rand(10, 3)  # Generate 10 random 3D points
-# ant_colony_optimization(points, n_ants=10, n_iterations=100, alpha=1, beta=1, evaporation_rate=0.5, Q=1)
+def cost_estimate(current, next):
+    dX = abs(current[0]-next[0])
+    dY = abs(current[1]-next[1])
+    if(dX>dY):
+        return 14 * dY + 10 * (dX - dY)
+    return 14 * dX + 10 * (dY - dX)
