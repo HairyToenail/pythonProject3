@@ -1,8 +1,9 @@
 import queue
-import exit
+from main import *
 import numpy as np
+realArray = a.copy()
 
-realArray = exit.realArray
+#realArray = exit.realArray
 
 startY = 49
 startX = 31
