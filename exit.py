@@ -23,75 +23,75 @@ d[55][33]=400
 # print(realArray)
 
 
-class QItem:
-    def __init__(self, row, col, dist):
-        self.row = row
-
-        self.col = col
-        self.dist = dist
-
-    def __repr__(self):
-        return f"QItem({self.row}, {self.col}, {self.dist})"
-
-def minDistance(grid):
-    source = QItem(0, 0, 0, list())
-
-    # Finding the source to start from
-    for row in range(len(grid)):
-        for col in range(len(grid[row])):
-            if grid[row][col] == 3:
-                source.row = row
-                source.col = col
-                d[row][col]=400
-                break
-    # To maintain location visit status
-    visited = [[False for _ in range(len(grid[0]))]
-               for _ in range(len(grid))]
-
-    # applying BFS on matrix cells starting from source
-    queue = []
-    queue.append(source)
-    visited[source.row][source.col] = True
-    i=0
-    while len(queue) != 0:
-
-        source = queue.pop(0)
-        print(source)
-        # moving up
-        if isValid(source.row- 1, source.col, grid, visited):
-            visited[source.row - 1][source.col] = True
-
-            if (grid[source.row-1][source.col] == 4):
-                return source.dist-1, source.g, len(source.g)
-            d[source.row-1][source.col]=500
-        # moving down
-        if isValid(source.row + 1, source.col, grid, visited):
-            queue.append(QItem(source.row + 1, source.col, source.dist + 1))
-            visited[source.row + 1][source.col] = True
-            if (grid[source.row+1][source.col] == 4):
-                return source.dist-1, source.g, len(source.g)
-            d[source.row + 1][source.col] = 500
-
-
-        # moving left
-        if isValid(source.row, source.col - 1, grid, visited):
-            queue.append(QItem(source.row, source.col - 1, source.dist + 1))
-            visited[source.row][source.col - 1] = True
-            if (grid[source.row][source.col+1] == 4):
-                return source.dist-1, source.g, len(source.g)
-            d[source.row][source.col-1] = 500
-
-        # moving right
-        if isValid(source.row, source.col + 1, grid, visited):
-            queue.append(QItem(source.row, source.col + 1, source.dist + 1))
-            visited[source.row][source.col + 1] = True
-            if (grid[source.row][source.col-1] == 4):
-                return source.dist-1, source.g, len(source.g)
-            d[source.row][source.col+1] = 500
-
-
-    return -1
-np.savetxt("tttt.csv", d, delimiter=',')
+# class QItem:
+#     def __init__(self, row, col, dist):
+#         self.row = row
+#
+#         self.col = col
+#         self.dist = dist
+#
+#     def __repr__(self):
+#         return f"QItem({self.row}, {self.col}, {self.dist})"
+#
+# def minDistance(grid):
+#     source = QItem(0, 0, 0, list())
+#
+#     # Finding the source to start from
+#     for row in range(len(grid)):
+#         for col in range(len(grid[row])):
+#             if grid[row][col] == 3:
+#                 source.row = row
+#                 source.col = col
+#                 d[row][col]=400
+#                 break
+#     # To maintain location visit status
+#     visited = [[False for _ in range(len(grid[0]))]
+#                for _ in range(len(grid))]
+#
+#     # applying BFS on matrix cells starting from source
+#     queue = []
+#     queue.append(source)
+#     visited[source.row][source.col] = True
+#     i=0
+#     while len(queue) != 0:
+#
+#         source = queue.pop(0)
+#         print(source)
+#         # moving up
+#         if isValid(source.row- 1, source.col, grid, visited):
+#             visited[source.row - 1][source.col] = True
+#
+#             if (grid[source.row-1][source.col] == 4):
+#                 return source.dist-1, source.g, len(source.g)
+#             d[source.row-1][source.col]=500
+#         # moving down
+#         if isValid(source.row + 1, source.col, grid, visited):
+#             queue.append(QItem(source.row + 1, source.col, source.dist + 1))
+#             visited[source.row + 1][source.col] = True
+#             if (grid[source.row+1][source.col] == 4):
+#                 return source.dist-1, source.g, len(source.g)
+#             d[source.row + 1][source.col] = 500
+#
+#
+#         # moving left
+#         if isValid(source.row, source.col - 1, grid, visited):
+#             queue.append(QItem(source.row, source.col - 1, source.dist + 1))
+#             visited[source.row][source.col - 1] = True
+#             if (grid[source.row][source.col+1] == 4):
+#                 return source.dist-1, source.g, len(source.g)
+#             d[source.row][source.col-1] = 500
+#
+#         # moving right
+#         if isValid(source.row, source.col + 1, grid, visited):
+#             queue.append(QItem(source.row, source.col + 1, source.dist + 1))
+#             visited[source.row][source.col + 1] = True
+#             if (grid[source.row][source.col-1] == 4):
+#                 return source.dist-1, source.g, len(source.g)
+#             d[source.row][source.col+1] = 500
+#
+#
+#     return -1
+# np.savetxt("tttt.csv", d, delimiter=',')
 
 # checking where move is valid or not
 def isValid(x, y, grid, visited):
@@ -105,27 +105,25 @@ def isValid(x, y, grid, visited):
 
 
 # Driver code
-if __name__ == '__main__':
-    grid = realArray
-
-    print(minDistance(grid))
 tt = realArray.copy()
-
-def path(start, end):
+def path(start, end, arr):
     path = []
     open = []
     closed = []
-    open.append[start]
+    open.append(start)
+    parent = start
     while len(open)!=0:
         open.sort()
         current = open.pop(0)
-        closed.append(current)
-        parent = start
+        closed.insert(0,current)
         if(current==end):
             while(current!=start):
-                path.append(current)
+                if(len(closed)==0):
+                    return path
+                path.insert(0,current)
                 current = parent
-            return path
+                parent = closed.pop(0)
+
         neighbors = [(current[0]+1, current[1]),
                      (current[0]-1, current[1]),
                      (current[0]+1, current[1]+1),
@@ -135,20 +133,29 @@ def path(start, end):
                      (current[0]+1, current[1]-1),
                      (current[0]-1, current[1]+1)]
         for neighbor in neighbors:
-            if(tt[neighbor]!=0 or neighbor in closed):
+
+            if(arr[neighbor]!=0 or neighbor in closed):
                 continue
-            cost = tt[current] + cost_estimate(current, neighbor)
-            if(cost<tt[neighbor] or not (neighbor in open)):
-                tt[neighbor] = cost
-                hcost = cost_estimate((neighbor, end))
+            cost = arr[current] + cost_estimate(current, neighbor)
+            if(cost<arr[neighbor] or not (neighbor in open)):
+                arr[neighbor] = cost
                 parent = current
                 if(not(neighbor in open)):
-                    open.append(neighbor)
-    return -1
+                    open.insert(0, neighbor)
 
+    return -1
+tt[startY][startX] = 400
+tt[startY][startX] = 400
 def cost_estimate(current, next):
     dX = abs(current[0]-next[0])
     dY = abs(current[1]-next[1])
     if(dX>dY):
         return 14 * dY + 10 * (dX - dY)
     return 14 * dX + 10 * (dY - dX)
+if __name__ == '__main__':
+    grid = realArray
+
+    for vals in path((startX, startY), (endX, endY), tt):
+        tt[vals[0]][vals[1]]=500
+    np.savetxt("path.csv", tt, delimiter=',')
+

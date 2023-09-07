@@ -69,7 +69,7 @@ def findEnd(maze, moves):
     # for x, pos in enumerate(maze[0]): #y coordinate
     #     if pos == 3:
     #         start = x
-            
+
     i = startX #x coord
     j = startY #y coordinate
 
