@@ -1,8 +1,9 @@
 from main import *
 import numpy as np
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+# import matplotlib.pyplot as plt
+# from mpl_toolkits.mplot3d import Axes3D
 np.set_printoptions(threshold=sys.maxsize)
+np.set_printoptions(suppress=True)
 
 realArray = a.copy()
 d = a.copy()
@@ -15,10 +16,18 @@ for i in range(len(a)):
         else:
             realArray[i][o] = 0  # floor
 
-realArray[49][31] = 3 #start
-realArray[55][33] = 4 #exit
-d[49][31] = 400
-d[55][33]=400
+startY = 49
+startX = 31
+
+endY = 31
+endX = 31
+
+# realArray[startY][startX] = 3 #start
+# realArray[endY][endX] = 4 #exit
+
+
+d[startY][startX] = 400
+d[startY][startX] = 400
 #realArray is 0 and 1
 # print(realArray)
 

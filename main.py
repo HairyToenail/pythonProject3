@@ -114,7 +114,7 @@ def generate_points(subset=1):  # bigger subset more points ohhhh okok
 
 points = generate_points()
 
-print(len(points))
+# print(len(points))
 # Print first 5 rows to prove its a numpy array (n_points by 3)
 # Columns are (X Y Z)
 point_cloud = pv.PolyData(points)  # this is where we create a point cloud
@@ -142,8 +142,8 @@ b=np.zeros((int(max(new[:, 1])*10)+1, int(max(new[:, 0])*10)+1), dtype=float)
 # print(new)
 
 test = []
-print(max(new[:, 2]))
-print(a.shape)
+# print(max(new[:, 2]))
+# print(a.shape)
 
 #puts in values for z based on (x,y) coordinates
 for i in range(len(new[:, 0])):
@@ -155,7 +155,7 @@ for i in range(len(new[:, 0])):
     if (h > b[x_coord, y_coord] and h>2.35): #adding to ceiling map
         b[x_coord, y_coord] = h
 
-print(len(test))
+# print(len(test))
 
 
 # removes 0s from columns and rows ohhhhhokok

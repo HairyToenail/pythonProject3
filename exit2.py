@@ -8,8 +8,11 @@ realArray = a.copy()
 startY = 49
 startX = 31
 
-endY = 112
-endX = 71
+endY = 57
+endX = 36
+
+# endY = 147
+# endX = 74 #far exit
 
 realArray[startY][startX] = 3 #start
 realArray[endY][endX] = 4 #exit
@@ -32,12 +35,15 @@ def printMaze(maze, moves):
             j -= 1
         if move == 'D':
             j += 1
-        realArray[j][i] = 69
-    #
+        realArray[j][i] = 100
+
     # for j, row in enumerate(maze):
     #     for i, col in enumerate(row):
     #         if (j, i) in pos:
     #            realArray[j][i] = 69
+
+
+
 
 
 def valid(maze, moves):
@@ -47,6 +53,8 @@ def valid(maze, moves):
 
     i = startX
     j = startY
+
+
 
     for move in moves:
         if move == 'L':
@@ -58,11 +66,13 @@ def valid(maze, moves):
         if move == 'D':
             j += 1
 
+
+
         if not (0 <= i < len(maze[0]) and 0 <= j < len(maze)):
             return False
-        elif (maze[j][i] == 1):
+        elif (maze[j][i] == 1 or maze[j][i] == 5):
             return False
-
+    maze[j][i] = 5
     return True
 
 
@@ -89,7 +99,7 @@ def findEnd(maze, moves):
 
     if maze[j][i] == 4:  # exit
         print("Found: " + moves)
-        printMaze(maze, moves)
+        #printMaze(maze, moves)
         return True
 
 
@@ -101,13 +111,16 @@ maze = realArray
 
 while not findEnd(maze, add):
     add = nums.get()
+
     #print(add)
     for j in ["L", "R", "U", "D"]:
         put = add + j
         if valid(maze, put):
             nums.put(put)
+            print(put)
 
-print(realArray)
 
-np.savetxt("data8.csv", realArray, delimiter=',')
+#print(realArray)
+
+#np.savetxt("data8.csv", realArray, delimiter=',')
 
